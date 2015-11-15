@@ -1,0 +1,132 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+	<h1>Välkommen <span id="output-username"></span></h1>
+	<p class="lead">Rösta på vem som du tror kommer på första, andra och tredje plats i Eurovision son contest 2015! Exklusivt pris utlovas...</p>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div id="part01">
+			<h2>Vad heter du?</h2>
+			<div class="form-group">
+				<label for="username">Fyll i ditt namn:</label>
+				<input type="text" id="username" size="3" value="" class="form-control input-lg"/>
+				<input class="btn btn-default" type="submit" value="Submit" onclick="setUsername()">
+			</div>
+			</div>
+
+		<div id="part02">
+			<h2>Rösta</h2>
+
+			<div class="form-group">
+				<label for="place01">Plats nummer 1?</label>
+				<input type="number" id="place01" size="3" value="" class="form-control input-lg" pattern="\d*" />
+
+				<label for="place02">Plats nummer 2?</label>
+				<input type="number" id="place02" value="" class="form-control input-lg" pattern="\d*" />
+
+				<label for="place03">Plats nummer 3?</label>
+				<input type="number" id="place03" value="" class="form-control input-lg" pattern="\d*" />
+
+				<input class="btn btn-default" type="submit" value="Rösta" onclick=" doVote() ">
+			</div>
+		</div>
+
+		<div id="part03">
+			<br/>
+			<input class="btn btn-default" type="submit" value="Aktivera röstning" onclick=" enableVoting() ">
+			<input class="btn btn-default" type="submit" value="Avaktivera röstning" onclick=" disableVoting() ">
+		</div>
+		</div>
+</div>
+<script>
+	$(document).ready(function() {
+		if ($.cookie("username") === undefined) {
+			$('#part01').fadeIn('slow');
+		} else {
+			writeUsername();
+			$('#part02').fadeIn('slow');
+
+			if ($.cookie("username").toLowerCase() === 'per') {
+				$('#part03').fadeIn('slow');
+			}
+			getVotes();
+		}
+	});
+
+	var writeUsername = function() {
+		$('#output-username').text($.cookie("username"));
+	};
+
+	var setUsername = function() {
+		if ($('#username').val()) {
+			if ($('#username').val().toLowerCase() === 'per') {
+					alert('Otillåtet');
+					return;
+			}
+			if ($('#username').val().toLowerCase() === 'admin') {
+				$('#username').val('Per');
+			}
+
+			$.cookie('username', $('#username').val(), { expires: 1 });
+			writeUsername();
+			$('#part01').fadeOut('slow');
+			$('#part02').fadeIn('slow');
+			window.scrollTo(0, 0);
+		} else {
+			alert('Vänligen fyll i ditt namn!' + $('#username').val());
+		}
+	};
+
+	var getVotes = function() {
+		var result = $.ajax({
+			url: '/home/getvotes/?username=' + $.cookie("username"),
+			error: function(jqXhr, statusCode, err) {
+				console.log('Ok');
+			},
+			success: function(data, statusCode, jqXhr) {
+				$('#place01').val(data.Place1);
+				$('#place02').val(data.Place2);
+				$('#place03').val(data.Place3);
+			}
+		});
+	};
+
+	var doVote = function() {
+		var result = $.ajax({
+			url: '/home/vote/?username=' + $.cookie("username") + '&place1=' + $('#place01').val() + '&place2=' + $('#place02').val() + '&place3=' + $('#place03').val(),
+			error: function (jqXhr, statusCode, err) {
+				alert('Tyvärr gick något fel!');
+			},
+			success: function (data, statusCode, jqXhr) {
+				alert(data.msg);
+			}
+	});
+	};
+
+	var disableVoting = function() {
+		var result = $.ajax({
+			url: '/home/StateVoting/?state=false',
+			error: function (jqXhr, statusCode, err) {
+				alert('Tyvärr gick något fel!');
+			},
+			success: function (data, statusCode, jqXhr) {
+				alert(data.msg);
+			}
+		});
+	};
+	var enableVoting = function () {
+		var result = $.ajax({
+			url: '/home/StateVoting/?state=true',
+			error: function (jqXhr, statusCode, err) {
+				alert('Tyvärr gick något fel!');
+			},
+			success: function (data, statusCode, jqXhr) {
+				alert(data.msg);
+			}
+		});
+	};
+</script>
