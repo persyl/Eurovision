@@ -11,5 +11,5 @@
 packages
 PublishScripts
 
-eurovision/bin
-eurovision/obj
+**/bin
+**/obj
