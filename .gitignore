@@ -2,6 +2,8 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
+
+
 *.suo
 *.user
 
@@ -9,15 +11,5 @@
 packages
 PublishScripts
 
-/Solution/PublishScripts
-/Solution/TestStuffWithIoC/Properties/PublishProfiles
-/Solution/TestStuffWithIoC/__TestProfilesForFilePreview__
-test.html
-
-/Solution/node_modules
-/Solution/TestStuffWithIoC/static/js/dist
-/Solution/TestStuffWithIoC/static/js/vendor
-/Solution/TestStuffWithIoC/bin
-/Solution/TestStuffWithIoC/obj
-/Solution/UnitTests/bin
-/Solution/UnitTests/obj
+eurovision/bin
+eurovision/obj
